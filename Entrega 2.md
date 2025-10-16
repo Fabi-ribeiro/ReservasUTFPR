@@ -6,7 +6,8 @@ As telas que anteriormente foram apresentadas apenas como protótipos agora fora
 
 As telas que foram implementadas:
 
-- Tela de **Login**.
+- Telas: **Login**, **Cadastro**, **Home (Principal)**, **Reservas**, **Consulta de Reservas** e **Perfil**.
+
 
 As telas estão bem estruturadas, e o próximo passo será aprimorar a lógica geral para o projeto final.
 
