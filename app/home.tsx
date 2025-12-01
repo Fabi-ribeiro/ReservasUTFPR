@@ -1,176 +1,296 @@
-import { Feather, MaterialIcons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useRouter } from "expo-router";
+import { useAuth } from "./AuthContext";
+import { listenItems, Item } from "../services/itemsStore";
+
+/* Mapeamento de imagens locais pois o React Native não aceita require com variável, por isso criamos o mapa abaixo.*/
+const localImages: Record<string, any> = {
+  "armario_pequeno.jpeg": require("../assets/images/Mobiliario/armario_pequeno.jpeg"),
+  "cadeira_estofada_confort.jpeg": require("../assets/images/Mobiliario/cadeira_estofada_confort.jpeg"),
+  "cadeira_executiva_premium.jpeg": require("../assets/images/Mobiliario/cadeira_executiva_premium.jpeg"),
+  "mesa_reuniao_grande.jpeg": require("../assets/images/Mobiliario/mesa_reuniao_grande.jpeg"),
+  "placeholder.jpeg": require("../assets/images/Mobiliario/placeholder.jpeg"),
+  "armario_pequeno_dois.jpeg": require("../assets/images/Mobiliario/armario_pequeno_dois.jpeg"),
+  "cadeira_escritorio_tres.jpeg": require("../assets/images/Mobiliario/cadeira_escritorio_tres.jpeg"),
+};
 
 export default function Home() {
   const router = useRouter();
-  const [search, setSearch] = useState("");
-  const [categoryFilter, setCategoryFilter] = useState("Todas");
+  const { user } = useAuth();
 
-  const initialItems = [
-    { id: '1', title: 'Cadeira Executiva Premium', category: 'Cadeiras', location: 'Sala 201', capacity: 1, rating: 4.8, image: require('../assets/images/Mobiliário/Cadeira_executiva_premium.jpeg'), available: true },
-    { id: '2', title: 'Mesa de Reunião Grande', category: 'Mesas', location: 'Sala 305', capacity: 8, rating: 4.6, image: require('../assets/images/Mobiliário/Mesa_reuniao_grande.jpeg'), available: false },
-    { id: '3', title: 'Armário Pequeno', category: 'Armários', location: 'Depósito', capacity: 1, rating: 4.2, image: require('../assets/images/Mobiliário/Armario_pequeno.jpeg'), available: true },
-    { id: '4', title: 'Cadeira Estofada Confort', category: 'Cadeiras', location: 'Sala 110', capacity: 1, rating: 4.5, image: require('../assets/images/Mobiliário/Cadeira_Estofada_Confort.jpeg'), available: true },
+  const [items, setItems] = useState<Item[]>([]);
+  const [filtered, setFiltered] = useState<Item[]>([]);
+
+  const [search, setSearch] = useState("");
+  const searchRef = useRef<TextInput | null>(null);
+
+  const [category, setCategory] = useState("Todas");
+
+  const CATEGORIES = [
+    "Todas",
+    "Cadeiras",
+    "Mesas",
+    "Armários",
+    "Projetores",
+    "Equipamentos",
   ];
 
-  const [items] = useState(initialItems);
+  useEffect(() => {
+    const unsubscribe = listenItems(setItems);
+    return unsubscribe;
+  }, []);
 
-  const normalize = (s: string) =>
-    s
-      .normalize("NFD")
-      .replace(/\p{Diacritic}/gu, "")
-      .toLowerCase();
+  // Filtro Automatico
+  useEffect(() => {
+    let result = items;
 
-  const filtered = useMemo(() => {
-    const q = normalize(search.trim());
-    const bySearch = (it: typeof items[number]) => {
-      if (!q) return true;
-      const title = normalize(it.title);
-      const category = normalize(it.category);
-      const location = normalize(it.location);
-      return title.includes(q) || category.includes(q) || location.includes(q);
-    };
+    if (category !== "Todas") {
+      result = result.filter((i) => i.category === category);
+    }
 
-    const byCategory = (it: typeof items[number]) => {
-      if (!categoryFilter || categoryFilter === "Todas") return true;
-      return it.category === categoryFilter;
-    };
+    if (search.trim().length > 0) {
+      const s = search.toLowerCase();
+      result = result.filter(
+        (i) =>
+          i.title.toLowerCase().includes(s) ||
+          i.location.toLowerCase().includes(s)
+      );
+    }
 
-    return items.filter((it) => byCategory(it) && bySearch(it));
-  }, [search, items, categoryFilter]);
+    setFiltered(result);
+  }, [items, category, search]);
 
   return (
     <SafeAreaView style={styles.container}>
+      {/* HEADER */}
       <View style={styles.header}>
         <View style={styles.headerLeft}>
-          <TouchableOpacity onPress={() => router.push('/login' as any)} style={styles.searchBadge}>
-            <Feather name="search" size={20} color="#000" />
+          <TouchableOpacity
+            style={styles.searchBadge}
+            onPress={() => searchRef.current?.focus()}
+          >
+            <Image
+              source={require("../assets/search.jpeg")}
+              style={{ width: 20, height: 20 }}
+            />
           </TouchableOpacity>
+
           <View style={styles.headerText}>
             <Text style={styles.headerTitle}>Reservas UTFPR</Text>
             <Text style={styles.headerSubtitle}>Sistema de Reserva Mobiliária</Text>
           </View>
         </View>
-        <Text style={styles.headerGreeting}>Olá, João</Text>
+
+        <Text style={styles.headerGreeting}>Olá, {user?.name ?? "Usuário"}</Text>
       </View>
 
-      <ScrollView contentContainerStyle={styles.scroll}>
-        <Text style={styles.sectionTitle}>Mobiliário Disponível</Text>
-        <Text style={styles.sectionSubtitle}>Encontre e reserve o mobiliário que você precisa</Text>
+      {/* BARRA DE BUSCA */}
+      <View style={styles.searchContainer}>
+        <TextInput
+          ref={searchRef}
+          value={search}
+          onChangeText={setSearch}
+          placeholder="Buscar mobiliário ou local..."
+          placeholderTextColor="#999"
+          style={styles.searchInput}
+        />
+      </View>
 
-        <View style={styles.searchBox}>
-          <Feather name="search" size={18} color="#bdbdbd" />
-          <TextInput value={search} onChangeText={setSearch} placeholder="Buscar mobiliário ou local..." placeholderTextColor="#bdbdbd" style={styles.searchInput} />
-        </View>
-
-        <View style={styles.filterRow}>
-          {['Todas','Cadeiras','Mesas','Armários'].map((c) => (
-            <TouchableOpacity key={c} onPress={() => setCategoryFilter(c)} style={[styles.filterPill, categoryFilter === c && styles.filterPillActive]}>
-              <Text style={categoryFilter === c ? styles.filterPillTextActive : undefined}>{c}</Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-
-        <Text style={{ marginTop: 12, color: '#8a8a8a' }}>{filtered.length} itens encontrados</Text>
-
-        {filtered.map((it) => (
-          <View key={it.id} style={[styles.card, !it.available && styles.cardUnavailable]}>
-            <View>
-                <View style={styles.cardImageWrapper}>
-                  <Image
-                    source={typeof it.image === 'string' ? { uri: it.image } : it.image}
-                    style={styles.cardImage}
-                    resizeMode="contain"
-                  />
-                </View>
-                <View style={[styles.badge, it.available ? styles.badgeAvailable : styles.badgeUnavailable]}>
-                  <Text style={styles.badgeText}>{it.available ? 'Disponível' : 'Reservado'}</Text>
-                </View>
-              </View>
-            <View style={styles.cardBody}>
-              <Text style={[styles.cardTitle, !it.available && styles.textMuted]}>{it.title}</Text>
-              <Text style={[styles.cardCategory, !it.available && styles.textMuted]}>{it.category}</Text>
-              <View style={styles.cardMeta}>
-                <Text style={[styles.metaText, !it.available && styles.textMuted]}>{it.location}</Text>
-                <Text style={[styles.metaText, !it.available && styles.textMuted]}>· {it.capacity}</Text>
-                <Text style={[styles.metaText, !it.available && styles.textMuted]}>· ★ {it.rating}</Text>
-              </View>
-
-              <TouchableOpacity
-                style={[styles.reserveBtn, !it.available && styles.reserveBtnDisabled]}
-                disabled={!it.available}
-                onPress={() => {
-                  if (!it.available) return;
-                  const title = encodeURIComponent(it.title);
-                  router.push(`/reservar/${it.id}?title=${title}` as any);
-                }}
-              >
-                <Text style={[styles.reserveBtnText, !it.available && styles.textMuted]}>{it.available ? 'Reservar' : 'Indisponível'}</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
+      {/* FILTROS */}
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        style={styles.filters}
+      >
+        {CATEGORIES.map((cat) => (
+          <TouchableOpacity
+            key={cat}
+            style={[
+              styles.filterButton,
+              category === cat && styles.filterButtonActive,
+            ]}
+            onPress={() => setCategory(cat)}
+          >
+            <Text
+              style={[
+                styles.filterText,
+                category === cat && styles.filterTextActive,
+              ]}
+            >
+              {cat}
+            </Text>
+          </TouchableOpacity>
         ))}
-
       </ScrollView>
 
-      <View style={styles.tabBar}>
-        <TouchableOpacity style={styles.tabItem} onPress={() => router.push('/home' as any)}>
-          <MaterialIcons name="home" size={24} color="#ffd300" />
-          <Text style={{ color: '#ffd300' }}>Início</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.tabItem} onPress={() => router.push('/reservas' as any)}>
-          <MaterialIcons name="event" size={24} color="#999" />
-          <Text style={{ color: '#999' }}>Reservas</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.tabItem} onPress={() => router.push('/perfil' as any)}>
-          <MaterialIcons name="person" size={24} color="#999" />
-          <Text style={{ color: '#999' }}>Perfil</Text>
-        </TouchableOpacity>
-      </View>
+      {/* LISTA DE ITENS */}
+      <ScrollView contentContainerStyle={styles.itemsContainer}>
+        {filtered.map((item) => (
+          <TouchableOpacity
+            key={item.id}
+            style={styles.card}
+            onPress={() =>
+              router.push({
+                pathname: "/reservar/[id]",
+                 params: { id: item.id }
+
+              })
+            }
+          >
+            <Image
+              source={localImages[item.image] || localImages["placeholder.jpeg"]}
+              style={styles.cardImage}
+            />
+
+            <View style={{ padding: 12 }}>
+              <Text style={styles.cardTitle}>{item.title}</Text>
+              <Text style={styles.cardLocation}>{item.location}</Text>
+              <Text style={styles.cardCategory}>{item.category}</Text>
+
+              <Text
+                style={[
+                  styles.availability,
+                  item.available ? styles.available : styles.unavailable,
+                ]}
+              >
+                {item.available ? "Disponível" : "Indisponível"}
+              </Text>
+            </View>
+          </TouchableOpacity>
+        ))}
+
+        {filtered.length === 0 && (
+          <Text style={{ marginTop: 40, textAlign: "center", color: "#777" }}>
+            Nenhum item encontrado.
+          </Text>
+        )}
+      </ScrollView>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#fff' },
-  header: { backgroundColor: '#ffd300', paddingTop: 18, paddingBottom: 12, paddingHorizontal: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  headerLeft: { flexDirection: 'row', alignItems: 'center' },
-  headerTitle: { fontWeight: '700' },
-  headerText: { marginLeft: 8, justifyContent: 'center' },
-  headerSubtitle: { color: '#8a8a8a', fontSize: 13 },
-  headerGreeting: { fontSize: 13 },
-  searchBadge: { width: 44, height: 44, borderRadius: 10, backgroundColor: '#ffd300', alignItems: 'center', justifyContent: 'center', marginRight: 10, borderWidth: 1, borderColor: 'rgba(0,0,0,0.06)', elevation: 2, shadowColor: '#000', shadowOpacity: 0.08, shadowRadius: 4, shadowOffset: { width: 0, height: 2 } },
-  iconButton: { padding: 6 },
-  scroll: { padding: 16 },
-  sectionTitle: { fontSize: 20, fontWeight: '700', marginTop: 8 },
-  sectionSubtitle: { color: '#8a8a8a', marginTop: 6 },
-  searchBox: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#f6f6f6', padding: 12, borderRadius: 12, marginTop: 12 },
-  searchPlaceholder: { color: '#bdbdbd', marginLeft: 8 },
-  searchInput: { marginLeft: 8, flex: 1, color: '#333', padding: 0 },
-  filterRow: { flexDirection: 'row', gap: 8, marginTop: 12 },
-  filterPill: { paddingHorizontal: 12, paddingVertical: 8, backgroundColor: '#fff', borderRadius: 20, borderWidth: 1, borderColor: '#f0f0f0', marginRight: 8 },
-  filterPillActive: { backgroundColor: '#fff', borderColor: '#ffd300' },
-  filterPillTextActive: { color: '#ffd300', fontWeight: '700' },
-  card: { backgroundColor: '#fff', borderRadius: 12, overflow: 'hidden', marginTop: 12, borderWidth: 1, borderColor: '#f0f0f0' },
-  cardUnavailable: { opacity: 0.6 },
-  cardImage: { width: '100%', height: 180 },
-  cardImageWrapper: { width: '100%', height: 180, alignItems: 'center', justifyContent: 'center', backgroundColor: '#fff' },
-  badge: { position: 'absolute', top: 10, right: 10, paddingHorizontal: 10, paddingVertical: 6, borderRadius: 12 },
-  badgeAvailable: { backgroundColor: '#FFD300' },
-  badgeUnavailable: { backgroundColor: '#d3d3d3' },
-  badgeText: { fontWeight: '700', color: '#000' },
-  textMuted: { color: '#a0a0a0' },
-  cardBody: { padding: 12 },
-  cardTitle: { fontWeight: '700', fontSize: 16 },
-  cardCategory: { color: '#8a8a8a', marginTop: 4 },
-  cardMeta: { flexDirection: 'row', marginTop: 8 },
-  metaText: { color: '#8a8a8a', marginRight: 8 },
-  reserveBtn: { backgroundColor: '#FFD300', paddingVertical: 12, borderRadius: 8, marginTop: 12, alignItems: 'center' },
-  reserveBtnText: { fontWeight: '700' },
-  reserveBtnDisabled: { backgroundColor: '#e0e0e0' },
-  tabBar: { height: 72, borderTopWidth: 1, borderColor: '#f0f0f0', flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center' },
-  tabItem: { alignItems: 'center' },
+  container: { flex: 1, backgroundColor: "#fff" },
+
+  header: {
+    backgroundColor: "#ffd300",
+    paddingTop: 18,
+    paddingBottom: 16,
+    paddingHorizontal: 14,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  headerLeft: { flexDirection: "row", alignItems: "center" },
+  searchBadge: {
+    backgroundColor: "#fff",
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  headerText: { marginLeft: 10 },
+  headerTitle: { fontWeight: "700" },
+  headerSubtitle: { color: "#8a8a8a", fontSize: 13 },
+  headerGreeting: { fontWeight: "600" },
+
+  searchContainer: {
+    paddingHorizontal: 16,
+    marginTop: 16,
+  },
+  searchInput: {
+    backgroundColor: "#f0f0f0",
+    borderRadius: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    fontSize: 14,
+  },
+filters: {
+  paddingVertical: 16,
+  paddingHorizontal: 10,
+  flexDirection: "row",
+},
+
+filterButton: {
+  paddingHorizontal: 18,
+  paddingVertical: 8,
+  borderRadius: 20,
+  marginRight: 10,
+  backgroundColor: "#fff",
+  borderWidth: 1,
+  borderColor: "#ccc",
+  minHeight: 36,          
+  justifyContent: "center",
+  alignItems: "center",
+},
+
+filterButtonActive: {
+  backgroundColor: "#ffd300",
+  borderColor: "#e0b800",
+},
+
+
+filterText: {
+  fontWeight: "600",
+  fontSize: 14,
+  color: "#000000",          
+  includeFontPadding: false, 
+  textAlignVertical: "center",
+},
+
+filterTextActive: {
+  fontWeight: "700",
+  fontSize: 14,
+  color: "#000000",          
+  includeFontPadding: false,
+  textAlignVertical: "center",
+},
+
+
+
+
+  itemsContainer: {
+    padding: 16,
+    paddingBottom: 40,
+  },
+
+  card: {
+    backgroundColor: "#fff",
+    borderRadius: 16,
+    marginBottom: 20,
+    borderWidth: 1,
+    borderColor: "#ececec",
+    overflow: "hidden",
+  },
+  cardImage: {
+    width: "100%",
+    height: 160,
+    backgroundColor: "#eee",
+  },
+  cardTitle: {
+    fontSize: 18,
+    fontWeight: "700",
+  },
+  cardLocation: {
+    marginTop: 4,
+    color: "#777",
+  },
+  cardCategory: {
+    marginTop: 4,
+    color: "#333",
+    fontWeight: "600",
+  },
+  availability: {
+    marginTop: 10,
+    fontWeight: "700",
+  },
+  available: {
+    color: "#228B22",
+  },
+  unavailable: {
+    color: "#b30000",
+  },
 });

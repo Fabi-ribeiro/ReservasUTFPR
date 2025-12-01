@@ -6,7 +6,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Reservar() {
   const title = undefined as string | undefined;
-  const id = undefined as string | undefined;
   const router = useRouter();
 
   const [name, setName] = useState('');

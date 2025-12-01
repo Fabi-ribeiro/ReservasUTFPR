@@ -1,12 +1,27 @@
 import { Feather, FontAwesome5, MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
-import { Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import {
+  Alert,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
+
+import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
+import { db } from "../services/firebase";
+import { doc, setDoc } from "firebase/firestore";
+
 import { useAuth } from "./AuthContext";
 
 export default function Register() {
   const router = useRouter();
   const { setUser } = useAuth();
+
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -14,6 +29,44 @@ export default function Register() {
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [visible, setVisible] = useState(false);
+
+  async function handleRegister() {
+    if (!name || !email || !password) {
+      return Alert.alert("Erro", "Preencha os campos obrigatórios.");
+    }
+
+    if (password !== confirm) {
+      return Alert.alert("Erro", "As senhas não coincidem.");
+    }
+
+    try {
+      // Criar usuário no Firebase Auth
+      const creds = await createUserWithEmailAndPassword(getAuth(), email, password);
+
+      const uid = creds.user.uid;
+
+      // Salvar no Firestore
+      await setDoc(doc(db, "users", uid), {
+        name,
+        email,
+        phone,
+        department,
+        isAdmin: false,
+      });
+
+      // Atualizar contexto
+      setUser({
+        uid,
+        name,
+        email,
+      });
+
+      // Redirecionar
+      router.push("/home" as any);
+    } catch (err: any) {
+      Alert.alert("Erro ao registrar", err.message);
+    }
+  }
 
   return (
     <View style={styles.container}>
@@ -90,6 +143,7 @@ export default function Register() {
               />
             </View>
 
+            {/* SENHA */}
             <View style={[styles.labelRow, { marginTop: 12 }]}>
               <Feather name="lock" size={16} color="#333" />
               <Text style={styles.labelText}>Senha *</Text>
@@ -123,13 +177,7 @@ export default function Register() {
               </TouchableOpacity>
             </View>
 
-            <TouchableOpacity
-              style={styles.createButton}
-              onPress={() => {
-                setUser({ name: name || 'Usuário' });
-                router.push('/home' as any);
-              }}
-            >
+            <TouchableOpacity style={styles.createButton} onPress={handleRegister}>
               <Text style={styles.createButtonText}>Criar Conta</Text>
             </TouchableOpacity>
           </View>
@@ -140,23 +188,10 @@ export default function Register() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#ffffff",
-  },
-  scroll: {
-    alignItems: "center",
-    paddingVertical: 24,
-  },
-  wrapper: {
-    width: "94%",
-    maxWidth: 420,
-    alignItems: "center",
-  },
-  avatarArea: {
-    marginTop: 8,
-    marginBottom: 8,
-  },
+  container: { flex: 1, backgroundColor: "#ffffff" },
+  scroll: { alignItems: "center", paddingVertical: 24 },
+  wrapper: { width: "94%", maxWidth: 420, alignItems: "center" },
+  avatarArea: { marginTop: 8, marginBottom: 8 },
   avatar: {
     width: 72,
     height: 72,
@@ -165,18 +200,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  title: {
-    fontSize: 26,
-    fontWeight: "800",
-    marginTop: 12,
-    color: "#000",
-  },
-  subtitle: {
-    color: "#808080",
-    marginTop: 6,
-    marginBottom: 14,
-    textAlign: "center",
-  },
+  title: { fontSize: 26, fontWeight: "800", marginTop: 12, color: "#000" },
+  subtitle: { color: "#808080", marginTop: 6, marginBottom: 14, textAlign: "center" },
   formCard: {
     width: "100%",
     backgroundColor: "#fff",
@@ -190,20 +215,9 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     elevation: 2,
   },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: "700",
-    marginBottom: 12,
-  },
-  labelRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 6,
-  },
-  labelText: {
-    marginLeft: 8,
-    fontWeight: "600",
-  },
+  sectionTitle: { fontSize: 16, fontWeight: "700", marginBottom: 12 },
+  labelRow: { flexDirection: "row", alignItems: "center", marginBottom: 6 },
+  labelText: { marginLeft: 8, fontWeight: "600" },
   inputPill: {
     flexDirection: "row",
     alignItems: "center",
@@ -212,15 +226,8 @@ const styles = StyleSheet.create({
     paddingVertical: Platform.OS === "ios" ? 12 : 8,
     borderRadius: 12,
   },
-  inputText: {
-    marginLeft: 6,
-    color: "#333",
-    padding: 0,
-  },
-  eyeBtn: {
-    marginLeft: 8,
-    padding: 6,
-  },
+  inputText: { marginLeft: 6, color: "#333", padding: 0 },
+  eyeBtn: { marginLeft: 8, padding: 6 },
   createButton: {
     backgroundColor: "#2fb16f",
     marginTop: 16,
@@ -228,8 +235,5 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     alignItems: "center",
   },
-  createButtonText: {
-    color: "#fff",
-    fontWeight: "700",
-  },
+  createButtonText: { color: "#fff", fontWeight: "700" },
 });

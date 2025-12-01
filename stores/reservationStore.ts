@@ -1,3 +1,6 @@
+import { collection, addDoc, deleteDoc, doc, onSnapshot, orderBy, query, where } from 'firebase/firestore';
+import { db } from '../services/firebase';
+
 export type Reservation = {
   id: string;
   itemId?: string;
@@ -10,20 +13,55 @@ export type Reservation = {
   status?: string;
 };
 
-let store: Reservation[] = [];
-
-export function addReservation(r: Reservation) {
-  store = [r, ...store];
+// Cria uma nova reserva no Firestore
+export async function addReservation(data: Omit<Reservation, 'id'>) {
+  const colRef = collection(db, 'reservations');
+  await addDoc(colRef, {
+    ...data,
+    createdAt: new Date().toISOString(),
+  });
 }
 
-export function getReservations() {
-  return store.slice();
+// Remove uma reserva pelo ID (document ID no Firestore)
+export async function removeReservation(id: string) {
+  const docRef = doc(db, 'reservations', id);
+  await deleteDoc(docRef);
 }
 
-export function removeReservation(id: string) {
-  store = store.filter((r) => r.id !== id);
-}
+// Escuta em tempo real as reservas de um usuário específico
+export function listenReservationsByUser(
+  userName: string | undefined,
+  onChange: (reservations: Reservation[]) => void,
+) {
+  if (!userName) {
+    onChange([]);
+    return () => {};
+  }
 
-export function clearReservations() {
-  store = [];
+  const colRef = collection(db, 'reservations');
+  const q = query(
+    colRef,
+    where('reservedBy', '==', userName),
+    orderBy('createdAt', 'desc'),
+  );
+
+  const unsubscribe = onSnapshot(q, (snapshot) => {
+    const data: Reservation[] = snapshot.docs.map((d) => {
+      const raw = d.data() as any;
+      return {
+        id: d.id,
+        itemId: raw.itemId,
+        title: raw.title,
+        purpose: raw.purpose,
+        location: raw.location,
+        reservedBy: raw.reservedBy,
+        date: raw.date,
+        time: raw.time,
+        status: raw.status,
+      };
+    });
+    onChange(data);
+  });
+
+  return unsubscribe;
 }

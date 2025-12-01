@@ -1,0 +1,326 @@
+{
+  "items": [
+    {
+      "id": "9LNHWcK3px7eLoGbcKUT",
+      "title": "Mesa de Reunião Grande",
+      "category": "Mesas",
+      "location": "Sala 305",
+      "capacity": 8,
+      "rating": 4.6,
+      "available": false,
+      "createdAt": {
+        "_seconds": 1764372942,
+        "_nanoseconds": 62000000
+      },
+      "image": "mesa_reuniao_grande.jpeg",
+      "stock": 2
+    },
+    {
+      "id": "GKtIxReaYp9qgtQQCziy",
+      "title": "Armário Pequeno",
+      "category": "Armários",
+      "location": "Depósito",
+      "capacity": 1,
+      "rating": 4.2,
+      "available": true,
+      "createdAt": {
+        "_seconds": 1764372932,
+        "_nanoseconds": 986000000
+      },
+      "image": "armario_pequeno.jpeg",
+      "stock": 1
+    },
+    {
+      "id": "RVYs8Z4Hjf0E5IewT7fq",
+      "title": "Cadeira Executiva Premium",
+      "category": "Cadeiras",
+      "location": "Sala 201",
+      "capacity": 1,
+      "rating": 4.8,
+      "createdAt": {
+        "_seconds": 1764372937,
+        "_nanoseconds": 19000000
+      },
+      "image": "cadeira_executiva_premium.jpeg",
+      "available": false,
+      "stock": 0
+    },
+    {
+      "id": "ilEMUqeJUYfV43KyGIHz",
+      "category": "Cadeiras",
+      "location": "Sala 201",
+      "capacity": 1,
+      "rating": 4.8,
+      "available": true,
+      "createdAt": {
+        "_seconds": 1764372931,
+        "_nanoseconds": 59000000
+      },
+      "image": "cadeira_escritorio_tres.jpeg",
+      "title": "Cadeira Premium",
+      "stock": 3
+    },
+    {
+      "id": "ohaS8IkiD4CEsbxmw9oV",
+      "title": "Mesa de Reunião Grande",
+      "category": "Mesas",
+      "location": "Sala 305",
+      "capacity": 8,
+      "rating": 4.6,
+      "available": false,
+      "createdAt": {
+        "_seconds": 1764372932,
+        "_nanoseconds": 207000000
+      },
+      "image": "mesa_reuniao_grande.jpeg",
+      "stock": 1
+    },
+    {
+      "id": "rgACxvuNvX4akh4vq9jQ",
+      "category": "Armários",
+      "location": "Depósito",
+      "capacity": 1,
+      "rating": 4.2,
+      "available": true,
+      "createdAt": {
+        "_seconds": 1764372942,
+        "_nanoseconds": 829000000
+      },
+      "image": "armario_pequeno_dois.jpeg",
+      "title": "Armário Pequeno II",
+      "stock": 2
+    }
+  ],
+  "reservations": [
+    {
+      "id": "5TG8aFtn4C8byg7y6VSf",
+      "itemId": "ilEMUqeJUYfV43KyGIHz",
+      "title": "Cadeira Premium",
+      "purpose": "Uso para reuniao",
+      "date": "05/12/2025 - 06/12/2025",
+      "time": "08:00 - 18:00",
+      "fullName": "Pedro Souza",
+      "email": "pedro.s@gmail.com",
+      "notes": "uso pessoal",
+      "userId": "lYXFK0SQw1NGfLHdSwpb0hsUzFP2",
+      "reservedBy": "Pedro Souza",
+      "createdAt": "2025-11-30T23:26:25.484Z",
+      "status": "Aprovada"
+    },
+    {
+      "id": "6l78xgOAPaosNp2ml3TU",
+      "itemId": "3",
+      "title": "Armário Pequeno",
+      "purpose": "Teste 2",
+      "reservedBy": "Usuário",
+      "date": "30/11/2025 - 01/12/2025",
+      "time": "08:00 - 10:00",
+      "createdAt": "2025-11-28T22:31:05.625Z",
+      "userId": "",
+      "status": "Rejeitada"
+    },
+    {
+      "id": "9sSPQ1XiitnNR1RETZfL",
+      "title": "Teste de reserva",
+      "purpose": "Reunião de teste",
+      "reservedBy": "João",
+      "itemId": "I",
+      "date": "01/05/2025 - 03/05/2025",
+      "time": "08:00 - 10:00",
+      "createdAt": "2025-01-29T14:23:00.000Z",
+      "userId": "",
+      "status": "Rejeitada"
+    },
+    {
+      "id": "9t3stsx9W4ULGuQLSsIz",
+      "itemId": "RVYs8Z4Hjf0E5IewT7fq",
+      "title": "Cadeira Executiva Premium",
+      "purpose": "TESTE VIDEO",
+      "date": "12/12/2025 - 13/12/2025",
+      "time": "08:00 - 09:00",
+      "fullName": "Jhean F",
+      "email": "jheanfelipegotardo@gmail.com",
+      "notes": "TESTE",
+      "userId": "ygtbuZTuzWPu10Zp7eXU5O7WqD22",
+      "reservedBy": "Jhean F",
+      "createdAt": "2025-11-30T03:20:01.346Z",
+      "status": "Aprovada"
+    },
+    {
+      "id": "aTPDWoER0QXbBzad6Woc",
+      "itemId": "GKtIxReaYp9qgtQQCziy",
+      "title": "Armário Pequeno",
+      "purpose": "Teste ",
+      "date": "10/02/2026 - 11/02/2026",
+      "time": "09:00 - 16:00",
+      "fullName": "Maria",
+      "email": "maria@gmail.com",
+      "notes": "Teste novo 23:31",
+      "userId": "TnCRJajQG6TVsfqGuqDa78oI5TC3",
+      "reservedBy": "Maria",
+      "createdAt": "2025-11-30T02:32:01.724Z",
+      "status": "Rejeitada"
+    },
+    {
+      "id": "gkPZGup4YadlcZfGPnz8",
+      "itemId": "rgACxvuNvX4akh4vq9jQ",
+      "title": "Armário Pequeno II",
+      "purpose": "Evento",
+      "date": "01/12/2025 - 03/12/2025",
+      "time": "08:00 - 16:00",
+      "fullName": "Weliton",
+      "email": "weliton@gmail.com",
+      "notes": "Evento",
+      "userId": "Nt6BssYvwFgm428gpe0yxUGwVVF2",
+      "reservedBy": "Weliton",
+      "createdAt": "2025-11-30T19:13:50.899Z",
+      "status": "Aprovada"
+    },
+    {
+      "id": "gtOaNdMZmOHcyANtizq9",
+      "itemId": "GKtIxReaYp9qgtQQCziy",
+      "title": "Armário Pequeno",
+      "purpose": "Teste armario",
+      "date": "15/12/2025 - 16/12/2025",
+      "time": "08:00 - 18:00",
+      "fullName": "Jhean F",
+      "email": "jheanfelipegotardo@gmail.com",
+      "notes": "Uso armario",
+      "userId": "ygtbuZTuzWPu10Zp7eXU5O7WqD22",
+      "reservedBy": "Jhean F",
+      "createdAt": "2025-11-30T02:38:22.071Z",
+      "status": "Cancelada"
+    },
+    {
+      "id": "oUXVawXvEAkq9o37bepl",
+      "itemId": "GKtIxReaYp9qgtQQCziy",
+      "title": "Armário Pequeno",
+      "purpose": "Teste ajustes gerais",
+      "date": "29/11/2025 - 30/11/2025",
+      "time": "08:00 - 15:00",
+      "fullName": "Maria",
+      "email": "maria@gmail.com",
+      "notes": "gerais",
+      "userId": "TnCRJajQG6TVsfqGuqDa78oI5TC3",
+      "reservedBy": "Maria",
+      "createdAt": "2025-11-30T01:58:48.567Z",
+      "status": "Cancelada"
+    },
+    {
+      "id": "p8X6PNfl09APx83vXTEc",
+      "itemId": "RVYs8Z4Hjf0E5IewT7fq",
+      "title": "Cadeira Executiva Premium",
+      "fullName": "jhean",
+      "email": "jj@gmail.com",
+      "notes": "novo teste atualizaes",
+      "purpose": "Teste 22:43",
+      "reservedBy": "jheanfelipegotardo",
+      "date": "21/10/2025 - 22/10/205",
+      "time": "08:00 - 09:00",
+      "createdAt": "2025-11-29T01:40:05.104Z",
+      "userId": "",
+      "status": "Rejeitada"
+    },
+    {
+      "id": "qXrZOqYi77hDVbM7Z7RN",
+      "itemId": "GKtIxReaYp9qgtQQCziy",
+      "title": "Armário Pequeno",
+      "purpose": "adm",
+      "date": "15/02/2026 - 16/02/2026",
+      "time": "00000 - 00000",
+      "fullName": "jheanfelipegotardo",
+      "email": "jheanfelipegotardo@gmail.com",
+      "notes": "adm",
+      "userId": "ygtbuZTuzWPu10Zp7eXU5O7WqD22",
+      "reservedBy": "jheanfelipegotardo",
+      "createdAt": "2025-11-30T02:33:24.080Z",
+      "status": "Cancelada"
+    },
+    {
+      "id": "s9ClQInv4Zhs6gFmW1pL",
+      "itemId": "4",
+      "title": "Cadeira Estofada Confort",
+      "purpose": "novo teste app 19:36",
+      "reservedBy": "Usuário",
+      "date": "15/12/2025 - 16/12/2025",
+      "time": "08:00 - 10:11",
+      "createdAt": "2025-11-28T22:34:50.734Z",
+      "userId": "",
+      "status": "Rejeitada"
+    }
+  ],
+  "users": [
+    {
+      "id": "7cdcOaWrVMQJNvt9V3SwRhyhS9z2",
+      "name": "Marcos",
+      "email": "marcos@gmail.com",
+      "phone": "(46) 99562-6023",
+      "department": "Auxiliar ADM",
+      "isAdmin": false
+    },
+    {
+      "id": "Nt6BssYvwFgm428gpe0yxUGwVVF2",
+      "name": "Weliton",
+      "email": "weliton@gmail.com",
+      "phone": "(46) 99600-5420",
+      "department": "Engenharia",
+      "isAdmin": false
+    },
+    {
+      "id": "TnCRJajQG6TVsfqGuqDa78oI5TC3",
+      "name": "Maria",
+      "email": "maria@gmail.com",
+      "phone": "46 0000-0000",
+      "isAdmin": false,
+      "department": "Auxiliar Administrativo"
+    },
+    {
+      "id": "kVTvPE6wHpMxQ6Z5AWY3",
+      "name": "Jhean",
+      "email": "jheanfelipegotardo@gmail.com",
+      "phone": "(46) 97631-0590",
+      "departament": "Setor de TI",
+      "isAdmin": true
+    },
+    {
+      "id": "kWGCibsAcgYBIbVHEZachgwC9GI3",
+      "name": "Pedro",
+      "email": "pedro@gmail.com",
+      "phone": "49 9605 4056",
+      "department": "Auxiliar TI",
+      "isAdmin": false
+    },
+    {
+      "id": "lYXFK0SQw1NGfLHdSwpb0hsUzFP2",
+      "name": "Pedro Souza",
+      "email": "pedro.s@gmail.com",
+      "phone": "46 95603 2156",
+      "isAdmin": false,
+      "department": "Auxiliar Tenico"
+    },
+    {
+      "id": "pYrMY56t90h8DaZ8STKjTWhU8ZZ2",
+      "name": "Marcos",
+      "email": "marcossilva@gmail.com",
+      "phone": "46 999999",
+      "department": "Auxiliar Adm",
+      "isAdmin": false
+    },
+    {
+      "id": "vIac8WooDcLsBvW7gzmD",
+      "name": "Felipe",
+      "email": "felipegotardo@gmail.com",
+      "phone": "(46)97856-4023",
+      "departament": "Setor Administratativo",
+      "isAdmin": false
+    },
+    {
+      "id": "ygtbuZTuzWPu10Zp7eXU5O7WqD22",
+      "name": "Jhean F",
+      "isAdmin": false,
+      "department": "",
+      "phone": "46 99999999",
+      "email": "jhean-gotardo@gmail.com"
+    }
+  ]
+}
